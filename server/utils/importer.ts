@@ -2,7 +2,7 @@ import AdmZip from 'adm-zip'
 import { XMLParser } from 'fast-xml-parser'
 import { createHash } from 'node:crypto'
 import { createWriteStream } from 'node:fs'
-import { mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises'
 import { basename, extname, join, relative } from 'node:path'
 import { pipeline } from 'node:stream/promises'
 import { dataDir, getDatabase, rebuildSearchIndex } from './db'
@@ -146,19 +146,47 @@ async function downloadArchive(url: string, destination: string) {
   await pipeline(response.body as unknown as NodeJS.ReadableStream, createWriteStream(destination))
 }
 
-async function mountedArchive() {
+async function findMountedArchive() {
   const importDir = join(dataDir(), 'import')
   await mkdir(importDir, { recursive: true })
   const names = await readdir(importDir)
   const year = process.env.RT_ARCHIVE_YEAR
   const archives = names.filter(name => name.toLowerCase().endsWith('.zip'))
   const zip = (year ? archives.find(name => name.includes(year)) : undefined) || archives[0]
-  if (zip) return join(importDir, zip)
-  if (!envBool('RT_AUTO_DOWNLOAD')) return null
+  return zip ? join(importDir, zip) : null
+}
+
+export async function downloadConfiguredArchive() {
   const url = await discoverArchive()
+  const importDir = join(dataDir(), 'import')
+  await mkdir(importDir, { recursive: true })
   const destination = join(importDir, 'riigiteataja-auto.zip')
-  await downloadArchive(url, destination)
+  const temporary = `${destination}.download`
+  await rm(temporary, { force: true })
+  await downloadArchive(url, temporary)
+  await rm(destination, { force: true })
+  await rename(temporary, destination)
   return destination
+}
+
+async function mountedArchive() {
+  const archive = await findMountedArchive()
+  if (archive) return archive
+  if (!envBool('RT_AUTO_DOWNLOAD')) return null
+  return downloadConfiguredArchive()
+}
+
+export async function mountedArchivePath() {
+  return findMountedArchive()
+}
+
+export async function deleteMountedArchives() {
+  const importDir = join(dataDir(), 'import')
+  await mkdir(importDir, { recursive: true })
+  const names = await readdir(importDir)
+  const archives = names.filter(name => name.toLowerCase().endsWith('.zip'))
+  await Promise.all(archives.map(name => rm(join(importDir, name), { force: true })))
+  return archives.length
 }
 
 export type ImportResult = {
@@ -167,8 +195,8 @@ export type ImportResult = {
   skipped: boolean
 }
 
-export async function importMountedArchive(): Promise<ImportResult | null> {
-  const archive = await mountedArchive()
+export async function importMountedArchive(archiveOverride?: string): Promise<ImportResult | null> {
+  const archive = archiveOverride || await mountedArchive()
   if (!archive) return null
   const db = getDatabase()
   const bytes = await readFile(archive)

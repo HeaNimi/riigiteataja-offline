@@ -21,6 +21,9 @@ option is enabled; with it disabled, the service stays available with its
 existing database.
 
 For local development, use Node 22 and run `npm install && npm run dev`.
+The Nuxt development server serves both the web app and the API routes, so no
+separate API process is required. Open <http://127.0.0.1:3000>; API endpoints
+are available under `/api`, for example <http://127.0.0.1:3000/api/health>.
 
 ## Endpoints
 
@@ -32,6 +35,10 @@ For local development, use Node 22 and run `npm install && npm run dev`.
 - `GET /api/archive-status` (also `/api/archive/status`) — archive/import details
 - `/archive` — archive status page
 - `POST /api/import` — re-scan the mounted ZIP
+- `POST /api/archive/download` — download and import the configured archive
+- `POST /api/archive/reimport` — re-import the mounted ZIP
+- `DELETE /api/archive/delete` — delete mounted ZIP files while keeping imported data
+- `DELETE /api/archive/clear-data` — clear imported laws and import metadata
 - `/mcp` — MCP Streamable HTTP endpoint with exactly these tools:
   `search(query, limit?)`, `get_act(actIdentifier)` (legacy `id` alias accepted),
   `get_section(sectionIdentifier, actIdentifier?)` (legacy `id` alias accepted),

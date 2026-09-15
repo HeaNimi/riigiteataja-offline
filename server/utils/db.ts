@@ -121,3 +121,18 @@ export function archiveStatus() {
     latestImport: latestImport()
   }
 }
+
+export function clearImportedData() {
+  const db = getDatabase()
+  db.transaction(() => {
+    db.exec(`
+      DELETE FROM articles;
+      DELETE FROM sections;
+      DELETE FROM laws;
+      DELETE FROM laws_fts;
+      DELETE FROM sections_fts;
+      DELETE FROM import_runs;
+      DELETE FROM app_meta;
+    `)
+  })()
+}
