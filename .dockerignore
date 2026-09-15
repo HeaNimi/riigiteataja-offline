@@ -1,0 +1,10 @@
+node_modules
+.nuxt
+.output
+data/*
+!data/.gitkeep
+!data/import/
+data/import/*
+!data/import/.gitkeep
+.git
+.env

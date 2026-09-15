@@ -1,0 +1,27 @@
+{
+  "name": "riigiteataja-offline",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "preview": "nuxt preview",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "adm-zip": "^0.5.16",
+    "better-sqlite3": "^11.10.0",
+    "fast-xml-parser": "^5.2.3",
+    "nuxt": "^4.0.0",
+    "vue": "^3.5.13",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.5",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.15.21",
+    "typescript": "^5.8.3",
+    "vue-tsc": "^2.2.10"
+  }
+}
