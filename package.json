@@ -9,13 +9,13 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1",
-    "adm-zip": "^0.5.16",
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "adm-zip": "^0.6.1",
     "better-sqlite3": "^13.0.3",
-    "fast-xml-parser": "^5.2.3",
-    "nuxt": "^4.0.0",
-    "vue": "^3.5.13",
-    "zod": "^3.24.4"
+    "fast-xml-parser": "^5.11.1",
+    "nuxt": "^4.5.2",
+    "vue": "^3.5.42",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/adm-zip": "^0.5.5",
